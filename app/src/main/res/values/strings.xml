@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">EnglishLearningApp</string>
+    <string name="speaking_title">Pronunciation practice</string>
+    <string name="speaking_instructions">Read the sentence aloud. Your recording will be scored by the pronunciation service.</string>
+    <string name="speaking_sentence_label">Sentence to read</string>
+    <string name="speaking_language_note">Pronunciation scoring is currently configured for English (US).</string>
+    <string name="speaking_start_recording">Start recording</string>
+    <string name="speaking_stop_submit">Stop and submit</string>
+    <string name="speaking_recording">Recording...</string>
+    <string name="speaking_uploading">Uploading your recording...</string>
+    <string name="speaking_scoring">Scoring pronunciation. This can take a few minutes.</string>
+    <string name="speaking_result_title">Your result</string>
+    <string name="speaking_score">Pronunciation score: %1$d / 100</string>
+    <string name="speaking_transcript">We heard: %1$s</string>
+    <string name="speaking_words_to_practice">Words to practice</string>
+    <string name="speaking_word_error">%1$s: expected %2$s, heard %3$s</string>
+    <string name="speaking_failed">Scoring failed (%1$s). Please try again.</string>
+    <string name="speaking_pending">Assessment status: %1$s</string>
+    <string name="speaking_check_again">Check status again</string>
+    <string name="speaking_permission_denied">Microphone permission is needed to record your pronunciation.</string>
+    <string name="speaking_recording_error">Could not start recording. Check that the microphone is available.</string>
+    <string name="speaking_audio_too_short">The recording was too short. Please record the sentence again.</string>
 </resources>

@@ -8,6 +8,8 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object Register : Screen("register")
     data object Home : Screen("home")
+    data object SpeakingPractice : Screen("speaking_practice")
+    data object SpeakingLevelAssessment : Screen("speaking_level_assessment")
 
     // Flashcard flow
     data object FlashcardCollections : Screen("flashcard_collections")

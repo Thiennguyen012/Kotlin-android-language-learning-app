@@ -81,6 +81,10 @@ import com.vu.englishlearningapp.ui.screens.quiz.AttemptHistoryScreen
 import com.vu.englishlearningapp.ui.screens.quiz.AttemptHistoryViewModel
 import com.vu.englishlearningapp.ui.screens.quiz.AttemptDetailScreen
 import com.vu.englishlearningapp.ui.screens.quiz.AttemptDetailViewModel
+import com.vu.englishlearningapp.ui.screens.speaking.SpeakingPracticeScreen
+import com.vu.englishlearningapp.ui.screens.speaking.SpeakingPracticeViewModel
+import com.vu.englishlearningapp.ui.screens.speakinglevel.SpeakingLevelScreen
+import com.vu.englishlearningapp.ui.screens.speakinglevel.SpeakingLevelViewModel
 
 /**
  * Main navigation graph for the app.
@@ -196,8 +200,28 @@ fun AppNavGraph(
                 },
                 onAdminDashboardClick = {
                     navController.navigate(Screen.AdminDashboard.route)
+                },
+                onSpeakingPracticeClick = {
+                    navController.navigate(Screen.SpeakingPractice.route)
+                },
+                onSpeakingLevelClick = {
+                    navController.navigate(Screen.SpeakingLevelAssessment.route)
                 }
             )
+        }
+
+        composable(Screen.SpeakingPractice.route) {
+            val vm: SpeakingPracticeViewModel = viewModel(
+                factory = SpeakingPracticeViewModel.Factory(appContainer.speakingAssessmentRepository)
+            )
+            SpeakingPracticeScreen(vm, onBackClick = { navController.popBackStack() })
+        }
+
+        composable(Screen.SpeakingLevelAssessment.route) {
+            val vm: SpeakingLevelViewModel = viewModel(
+                factory = SpeakingLevelViewModel.Factory(appContainer.speakingLevelAssessmentRepository)
+            )
+            SpeakingLevelScreen(vm, onBackClick = { navController.popBackStack() })
         }
 
         // --- Flashcard Flow ---

@@ -12,6 +12,8 @@ import com.vu.englishlearningapp.data.remote.api.QuestionApi
 import com.vu.englishlearningapp.data.remote.api.PermissionApi
 import com.vu.englishlearningapp.data.remote.api.RoleApi
 import com.vu.englishlearningapp.data.remote.api.UserApi
+import com.vu.englishlearningapp.data.remote.api.SpeakingAssessmentApi
+import com.vu.englishlearningapp.data.remote.api.SpeakingLevelAssessmentApi
 import com.vu.englishlearningapp.data.repository.AuthRepository
 import com.vu.englishlearningapp.data.repository.CollectionRepository
 import com.vu.englishlearningapp.data.repository.FlashcardRepository
@@ -21,6 +23,8 @@ import com.vu.englishlearningapp.data.repository.QuestionRepository
 import com.vu.englishlearningapp.data.repository.PermissionRepository
 import com.vu.englishlearningapp.data.repository.RoleRepository
 import com.vu.englishlearningapp.data.repository.UserRepository
+import com.vu.englishlearningapp.data.repository.SpeakingAssessmentRepository
+import com.vu.englishlearningapp.data.repository.SpeakingLevelAssessmentRepository
 
 /**
  * Manual dependency injection container.
@@ -47,6 +51,8 @@ class AppContainer(context: Context) {
     val permissionApi: PermissionApi = retrofit.create(PermissionApi::class.java)
     val roleApi: RoleApi = retrofit.create(RoleApi::class.java)
     val userApi: UserApi = retrofit.create(UserApi::class.java)
+    val speakingAssessmentApi: SpeakingAssessmentApi = retrofit.create(SpeakingAssessmentApi::class.java)
+    val speakingLevelAssessmentApi: SpeakingLevelAssessmentApi = retrofit.create(SpeakingLevelAssessmentApi::class.java)
 
     // --- Repositories ---
     val authRepository = AuthRepository(authApi, tokenManager)
@@ -58,4 +64,6 @@ class AppContainer(context: Context) {
     val permissionRepository = PermissionRepository(permissionApi)
     val roleRepository = RoleRepository(roleApi)
     val userRepository = UserRepository(userApi)
+    val speakingAssessmentRepository = SpeakingAssessmentRepository(speakingAssessmentApi)
+    val speakingLevelAssessmentRepository = SpeakingLevelAssessmentRepository(speakingLevelAssessmentApi)
 }

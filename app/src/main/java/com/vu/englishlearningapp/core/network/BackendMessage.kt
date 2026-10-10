@@ -37,7 +37,15 @@ fun Throwable.toBackendMessage(): String {
     if (this is HttpException) {
         val backendMessage = runCatching {
             val body = response()?.errorBody()?.string().orEmpty()
-            JsonParser.parseString(body).asJsonObject.get("message")?.asString
+            val json = JsonParser.parseString(body).asJsonObject
+            json.getAsJsonObject("errors")
+                ?.entrySet()
+                ?.firstOrNull()
+                ?.value
+                ?.asJsonArray
+                ?.firstOrNull()
+                ?.asString
+                ?: json.get("message")?.asString
         }.getOrNull()
         if (!backendMessage.isNullOrBlank()) return backendMessage
         return if (code() >= 500) {
@@ -50,4 +58,5 @@ fun Throwable.toBackendMessage(): String {
     return localizedMessage ?: message ?: javaClass.simpleName
 }
 
-private class BackendMessageException(message: String) : Exception(message)
+private class BackendMessageException(message: String?) :
+    Exception(message?.takeIf { it.isNotBlank() } ?: "The server returned an unsuccessful response.")

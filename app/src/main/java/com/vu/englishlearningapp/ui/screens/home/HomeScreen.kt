@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,7 +43,9 @@ fun HomeScreen(
     onFlashcardsClick: () -> Unit = {},
     onQuizzesClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onAdminDashboardClick: () -> Unit = {}
+    onAdminDashboardClick: () -> Unit = {},
+    onSpeakingPracticeClick: () -> Unit = {},
+    onSpeakingLevelClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var searchQuery by rememberSaveable { mutableStateOf("") }
@@ -57,11 +61,14 @@ fun HomeScreen(
     val canViewFlashcards = permissionHelper.checkPermission("flashcard.view")
     val canViewQuizzes = permissionHelper.checkPermission("collection_test.view")
     val canAccessAdminDashboard = permissionHelper.checkPermission("admin_dashboard.view")
+    // Pronunciation practice is a learner feature; access to its API is checked by the backend.
+    // Do not tie its visibility to quiz-attempt permissions, which can be absent for admins.
+    val canPracticeSpeaking = uiState.user != null
 
-    LaunchedEffect(canViewFlashcards, canViewQuizzes, canAccessAdminDashboard) {
+    LaunchedEffect(canViewFlashcards, canViewQuizzes, canAccessAdminDashboard, canPracticeSpeaking) {
         val selectedCategoryAvailable = when (selectedCategory) {
             HomeCategory.LEARN -> canViewFlashcards
-            HomeCategory.TEST -> canViewQuizzes
+            HomeCategory.TEST -> canViewQuizzes || canPracticeSpeaking
             HomeCategory.ADMIN -> canAccessAdminDashboard
             else -> true
         }
@@ -85,6 +92,24 @@ fun HomeScreen(
                 category = HomeCategory.TEST,
                 icon = Icons.Default.Quiz,
                 onClick = onQuizzesClick
+            )
+        )
+        if (canPracticeSpeaking) add(
+            HomeModule(
+                title = "Pronunciation practice",
+                description = "Record a sentence and get pronunciation feedback",
+                category = HomeCategory.TEST,
+                icon = Icons.Default.Mic,
+                onClick = onSpeakingPracticeClick
+            )
+        )
+        if (canPracticeSpeaking) add(
+            HomeModule(
+                title = "Speaking level assessment",
+                description = "Answer a topic question and estimate your CEFR speaking level",
+                category = HomeCategory.TEST,
+                icon = Icons.Default.RecordVoiceOver,
+                onClick = onSpeakingLevelClick
             )
         )
         add(
@@ -209,7 +234,7 @@ fun HomeScreen(
                         HomeCategorySelector(
                             selectedCategory = selectedCategory,
                             showLearnCategory = canViewFlashcards,
-                            showTestCategory = canViewQuizzes,
+                            showTestCategory = canViewQuizzes || canPracticeSpeaking,
                             showAdminCategory = canAccessAdminDashboard,
                             onCategorySelected = { selectedCategory = it }
                         )
