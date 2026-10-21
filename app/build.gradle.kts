@@ -13,11 +13,11 @@ if (localPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.vu.englishlearningapp"
+    namespace = "com.englishlearningapp"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.vu.englishlearningapp"
+        applicationId = "com.englishlearningapp"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

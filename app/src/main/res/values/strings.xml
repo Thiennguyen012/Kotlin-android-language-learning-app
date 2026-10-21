@@ -1,9 +1,9 @@
-﻿<resources>
+<resources>
     <string name="app_name">EnglishLearningApp</string>
     <string name="speaking_title">Pronunciation practice</string>
     <string name="speaking_instructions">Read the sentence aloud. Your recording will be scored by the pronunciation service.</string>
     <string name="speaking_sentence_label">Sentence to read</string>
-    <string name="speaking_language_note">Random CEFR A2-B1 sentence • English (US). Tap refresh for another sentence.</string>
+    <string name="speaking_language_note">Random CEFR %1$s sentence • English (US). Tap refresh for another sentence.</string>
     <string name="speaking_new_sentence">Choose another sentence</string>
     <string name="speaking_start_recording">Start recording</string>
     <string name="speaking_stop_submit">Stop and submit</string>
