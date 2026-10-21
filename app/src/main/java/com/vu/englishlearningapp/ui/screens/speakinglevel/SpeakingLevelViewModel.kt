@@ -1,4 +1,4 @@
-package com.vu.englishlearningapp.ui.screens.speakinglevel
+﻿package com.vu.englishlearningapp.ui.screens.speakinglevel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +23,7 @@ data class SpeakingLevelUiState(
     val preparationRemaining: Int = 0,
     val responseRemaining: Int = 0,
     val readyToRecord: Boolean = false,
+    val autoStartRecording: Boolean = false,
     val recording: Boolean = false,
     val stopRequested: Boolean = false,
     val submitting: Boolean = false,
@@ -58,7 +59,8 @@ class SpeakingLevelViewModel(
                     assessment = assessment,
                     preparationRemaining = assessment.preparationSeconds,
                     responseRemaining = assessment.responseSeconds,
-                    readyToRecord = assessment.preparationSeconds == 0
+                    readyToRecord = assessment.preparationSeconds == 0,
+                    autoStartRecording = false
                 )
                 startPreparationTimer()
             } catch (exception: Exception) {
@@ -76,6 +78,7 @@ class SpeakingLevelViewModel(
         mutableState.value = mutableState.value.copy(
             recording = true,
             readyToRecord = false,
+            autoStartRecording = false,
             stopRequested = false,
             responseRemaining = assessment.responseSeconds,
             error = null
@@ -91,6 +94,20 @@ class SpeakingLevelViewModel(
                 }
             }
         }
+    }
+
+    fun consumeAutoStartRecording() {
+        if (mutableState.value.autoStartRecording) {
+            mutableState.value = mutableState.value.copy(autoStartRecording = false)
+        }
+    }
+
+    fun recordingStartFailed(message: String) {
+        mutableState.value = mutableState.value.copy(
+            readyToRecord = true,
+            autoStartRecording = false,
+            error = message
+        )
     }
 
     fun requestStop() {
@@ -142,6 +159,7 @@ class SpeakingLevelViewModel(
             preparationRemaining = 0,
             responseRemaining = 0,
             readyToRecord = false,
+            autoStartRecording = false,
             recording = false,
             stopRequested = false,
             submitting = false,
@@ -178,7 +196,10 @@ class SpeakingLevelViewModel(
                     preparationRemaining = mutableState.value.preparationRemaining - 1
                 )
             }
-            mutableState.value = mutableState.value.copy(readyToRecord = true)
+            mutableState.value = mutableState.value.copy(
+                readyToRecord = true,
+                autoStartRecording = true
+            )
         }
     }
 

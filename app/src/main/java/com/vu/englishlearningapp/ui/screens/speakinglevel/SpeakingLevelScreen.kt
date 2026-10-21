@@ -44,9 +44,11 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.vu.englishlearningapp.R
 import com.vu.englishlearningapp.data.remote.dto.speaking.SpeakingLevelResultDto
 import com.vu.englishlearningapp.ui.components.AppTopNavigationBar
 import com.vu.englishlearningapp.ui.screens.speaking.AudioRecorder
@@ -61,19 +63,39 @@ fun SpeakingLevelScreen(
     val state by viewModel.state.collectAsState()
     val recorder = remember(context) { AudioRecorder(context) }
     var inputLevel by remember { mutableFloatStateOf(0f) }
+    val recordingErrorMessage = stringResource(R.string.speaking_recording_error)
+    val permissionDeniedMessage = stringResource(R.string.speaking_permission_denied)
 
     val startRecording = {
         try {
             recorder.start()
             viewModel.recordingStarted()
         } catch (_: Exception) {
-            viewModel.submitRecordedAnswer(null)
+            viewModel.recordingStartFailed(recordingErrorMessage)
         }
     }
     val permissionRequest = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) startRecording() else viewModel.submitRecordedAnswer(null)
+        if (granted) startRecording() else viewModel.recordingStartFailed(permissionDeniedMessage)
+    }
+    val beginRecording = {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startRecording()
+        } else {
+            permissionRequest.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    LaunchedEffect(state.autoStartRecording) {
+        if (state.autoStartRecording) {
+            viewModel.consumeAutoStartRecording()
+            beginRecording()
+        }
     }
 
     DisposableEffect(recorder) {
@@ -110,14 +132,8 @@ fun SpeakingLevelScreen(
                     else -> AssessmentContent(state, inputLevel, viewModel) {
                         if (state.recording) {
                             viewModel.requestStop()
-                        } else if (ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.RECORD_AUDIO
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            startRecording()
                         } else {
-                            permissionRequest.launch(Manifest.permission.RECORD_AUDIO)
+                            beginRecording()
                         }
                     }
                 }
@@ -218,7 +234,7 @@ private fun AssessmentContent(
     if (state.submitting || state.polling) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CircularProgressIndicator()
-            Text(if (state.submitting) "Uploading your answerâ€¦" else "Evaluating your speakingâ€¦")
+            Text(if (state.submitting) "Uploading your answer..." else "Evaluating your speaking...")
         }
     }
 
@@ -251,12 +267,12 @@ private fun ResultCard(transcript: String, result: SpeakingLevelResultDto) {
             if (result.grammarErrors.isNotEmpty()) {
                 Text("Grammar corrections", fontWeight = FontWeight.Bold)
                 result.grammarErrors.forEach { error ->
-                    Text("${error.original} â†’ ${error.corrected}\n${error.explanation}")
+                    Text("${error.original} \u2192 ${error.corrected}\n${error.explanation}")
                 }
             }
             if (result.improvements.isNotEmpty()) {
                 Text("How to improve", fontWeight = FontWeight.Bold)
-                result.improvements.forEach { Text("â€¢ $it") }
+                result.improvements.forEach { Text("\u2022 $it") }
             }
             if (result.upgradedAnswer.isNotBlank()) {
                 Text("Upgraded answer", fontWeight = FontWeight.Bold)

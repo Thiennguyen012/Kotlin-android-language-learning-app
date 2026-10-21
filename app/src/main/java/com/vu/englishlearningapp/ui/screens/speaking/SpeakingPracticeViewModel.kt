@@ -1,4 +1,4 @@
-package com.vu.englishlearningapp.ui.screens.speaking
+﻿package com.vu.englishlearningapp.ui.screens.speaking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 data class SpeakingPracticeUiState(
-    val sentence: String = "Hello, how are you?",
+    val sentence: String = PronunciationSentenceBank.random(),
     val recording: Boolean = false,
     val submitting: Boolean = false,
     val polling: Boolean = false,
@@ -36,8 +36,17 @@ class SpeakingPracticeViewModel(
         const val STATUS_POLL_ATTEMPTS = 48
     }
 
-    fun updateSentence(value: String) {
-        mutableState.value = mutableState.value.copy(sentence = value.take(3000), error = null)
+    fun newRandomSentence() {
+        val currentState = mutableState.value
+        if (currentState.recording || currentState.submitting || currentState.polling) return
+
+        pollingJob?.cancel()
+        mutableState.value = currentState.copy(
+            sentence = PronunciationSentenceBank.random(excluding = currentState.sentence),
+            assessment = null,
+            error = null,
+            info = null
+        )
     }
 
     fun setRecording(value: Boolean) {

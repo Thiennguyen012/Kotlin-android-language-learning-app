@@ -1,4 +1,4 @@
-package com.vu.englishlearningapp.ui.screens.speaking
+﻿package com.vu.englishlearningapp.ui.screens.speaking
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -19,12 +19,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -116,12 +118,24 @@ fun SpeakingPracticeScreen(
             )
             OutlinedTextField(
                 value = state.sentence,
-                onValueChange = viewModel::updateSentence,
+                onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.speaking_sentence_label)) },
                 minLines = 2,
                 maxLines = 4,
-                enabled = !state.recording && !state.submitting && !state.polling
+                readOnly = true,
+                enabled = !state.recording && !state.submitting && !state.polling,
+                trailingIcon = {
+                    IconButton(
+                        onClick = viewModel::newRandomSentence,
+                        enabled = !state.recording && !state.submitting && !state.polling
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.speaking_new_sentence)
+                        )
+                    }
+                }
             )
             Text(
                 text = stringResource(R.string.speaking_language_note),
@@ -168,7 +182,7 @@ fun SpeakingPracticeScreen(
                     text = when {
                         inputLevel > 0.025f -> "Microphone is receiving sound"
                         System.currentTimeMillis() - silentSince > 3_000L -> "No sound detected. Check microphone permission and emulator input."
-                        else -> "Microphone is on. Speak into the microphone…"
+                        else -> "Microphone is on. Speak into the microphone..."
                     },
                     color = when {
                         inputLevel > 0.025f -> MaterialTheme.colorScheme.primary
